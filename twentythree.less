@@ -1,0 +1,415 @@
+// out: twentythree.css
+.vendor(@property, @value) {
+    @{property}: @value;
+    -webkit-@{property}: @value;
+}
+@sans: 'Poppins', 'Arial', sans-serif;
+@grey-med: #ccc;
+@white: #fff;
+
+html, body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Georgia', 'Times New Roman', 'Times', serif;
+    font-size: 15px;
+    line-height: 1.2;
+    background-color: @white;
+    min-height: 100%;
+    color: #333;
+}
+a {
+    color: #333;
+    text-decoration: none;
+    &:hover {
+        color: #555;
+    }
+}
+p {
+    margin: 0;
+    padding: 0.5em 0 1em;
+    &.book-weeks {
+        text-transform: uppercase;
+        font-family: @sans;;
+        font-size: 80%;
+    }
+}
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+}
+h1 {
+    font-size: 2em;
+    font-family: 'PT Serif', 'Georgia', serif;
+}
+h2 {
+    font-family: @sans;;
+    text-transform: uppercase;
+    &.category-title {
+        padding: 0 0 15px;
+    }
+}
+h3 {
+    font-family: @sans;
+    &.author {
+        padding: 0;
+        font-weight: normal;
+    }
+}
+html {
+    font-size: 14px;
+}
+body {
+    font-size: 1em;
+}
+.clear {
+    clear: both;
+}
+
+.page-width {
+    width: 976px;
+    margin: auto;
+    padding: 0 5%;
+    max-width: 90%;
+}
+.page-content {
+    position: relative;
+    min-height: 500px;
+}
+.loader {
+    text-align: center;
+    margin: auto;
+    position: absolute;
+    height: 100px;
+    width: 200px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-family: @sans;
+    .loader-bar {
+        background-color: #bbbbbb;
+        margin-top: 20px;
+        #progress-bar {
+            background-color: #ffbf47;
+            height: 40px;
+            width: 10px;
+        }
+    }
+}
+
+.header {
+    text-align: center;
+    padding: 50px 15px 40px;
+    .nyt-logo {
+        width: 275px;
+        height: 60px;
+        max-width: 100%;
+        margin: 0 auto 30px;
+    }
+}
+
+.menu-bar {
+    text-align: right;
+    margin: 0 0 40px;
+    padding: 15px 0;
+    border-top: 1px solid @grey-med;
+    border-bottom: 2px solid;
+    .menu-toggle {
+        float: left;
+        font-family: @sans;
+        font-size: 15px;
+        padding: 8px;
+        max-width: 100%;
+    }
+    .published-date {
+        float: right;
+    }
+}
+.breadcrumb {
+    padding: 0 0 15px;
+    margin: 0 0 20px;
+    color: #666;
+    border-bottom: 1px solid @grey-med;
+    .div {
+        padding: 0 8px;
+        color: @grey-med;
+    }
+    .cap-title {
+        text-transform: capitalize;
+    }
+}
+.footer {
+    text-align: center;
+    padding: 30px 15px;
+    margin: 40px 0 0;
+    border-top: 2px solid;
+}
+.clear {
+    clear: both;
+}
+
+h2 .small {
+    text-transform: none;
+    font-weight: normal;
+    font-size: 90%;
+}
+.review-link {
+    background-color: @white;
+    vertical-align: top;
+    display: inline-block;
+    margin-left: 5px;
+    padding: 5px 10px;
+    border: 1px solid @grey-med;
+    font-family: @sans;
+    .vendor(border-radius, 8px);
+    text-align: center;
+    &:hover {
+        background-color: @grey-med;
+    }
+}
+.buy {
+    position: relative;
+    vertical-align: top;
+    display: inline-block;
+    a.buy-button {
+        .vendor(border-radius, 8px);
+        background-color: @grey-med;
+        cursor: pointer;
+        font-family: @sans;
+        padding: 5px 10px;
+        border: 1px solid @white;
+        vertical-align: top;
+        display: inline-block;
+        &:hover {
+            color: @white;
+            background-color: #666;
+        }
+    }
+    .buy-options {
+        display: none;
+        margin-top: 10px;
+        position: absolute;
+        background-color: @white;
+        .vendor(box-shadow, 2px 2px 9px -2px rgba(0,0,0,0.5));
+        top: 100%;
+        left: 0;
+        border: 1px solid @grey-med;
+        .arrow {
+            position: absolute;
+            top: -9px;
+            left: 8px;
+            border-bottom: 9px solid @grey-med;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            .innerarrow {
+                position: absolute;
+                top: 1px;
+                left: -9px;
+                border-bottom: 8px solid @white;
+                border-left: 9px solid transparent;
+                border-right: 9px solid transparent;
+            }
+        }
+        a {
+            padding: 5px 10px;
+            display: block;
+            &:first-of-type {
+                padding-top: 10px;
+            }
+            &:last-of-type {
+                padding-bottom: 10px;
+            }
+            &:hover {
+                background-color: #eee;
+            }
+        }
+    }
+    .buy-showing > .buy-options {
+        display: block;
+    }
+}
+.list, .book-row {
+    padding: 0 0 40px;
+    margin: 0 0 40px;
+    clear: both;
+    border-bottom: 1px solid @grey-med;
+}
+.list {
+    display: table;
+    border-spacing: 13px;
+    border-collapse: separate;
+    width: 100%;
+    .book-column {
+        width: 20%;
+        padding: 25px 15px 70px;
+        position: relative;
+        display: table-cell;
+        background-color: #f3f3f3;
+
+        .buy, .review-link {
+            position: absolute;
+            bottom: 15px;
+            .buy-button {
+                padding: 13px 0;
+                text-align: center;
+                width: 100%;
+            }
+        }
+        .buy {
+            width: 30%;
+        }
+
+        .review-link {
+            right: 10px;
+            width: 34%;
+            padding: 5px 7%;
+        }
+
+        .rank {
+            position: absolute;
+            background-color: #bdbdbd;
+            color: white;
+            border-radius: 49%;
+            top: -11px;
+            text-align: center;
+            width: 27px;
+            line-height: 28px;
+            height: 27px;
+            left: -3px;
+            font-size: 17px;
+            font-family: @sans;
+        }
+        img {
+            width: 150px;
+            max-width: 100%;
+            height: auto;
+            margin: auto;
+        }
+    }
+}
+
+.book-row {
+    .rank {
+        float: left;
+        padding: 0 3% 0 0;
+        font-family: @sans;
+        font-size: 35px;
+        .arrow-rank {
+            display: block;
+            color: #9e9e9e;
+        }
+    }
+    img {
+        float: left;
+        width: 15%;
+        margin-right: 3%;
+    }
+    .book-content {
+        float: left;
+        width: 70%;
+        h3 {
+            font-size: 1.7em;
+            padding-top: 0;
+        }
+    }
+}
+
+.book-page {
+    img {
+        float: left;
+        width: 35%;
+        margin-right: 3%;
+    }
+    .book-content {
+        float: left;
+        width: 60%;
+        .rank {
+            padding: 10px 0;
+            span {
+                font-weight: bold;
+                font-size: 25px;
+            }
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .list {
+        display: block;
+        .book-column {
+            display: block;
+            width: auto;
+            padding: 15px 15px 15px 0;
+            margin: 0 0 20px;
+            .rank {
+                position: static;
+                float: left;
+                width: 7%;
+                background: none;
+                color: #555;
+            }
+            img {
+                float: left;
+                width: 13%;
+                margin-right: 3%;
+            }
+            .book-content {
+                width: 70%;
+                float: left;
+            }
+            .buy, .review-link {
+                position: static;
+                bottom: auto;
+                width: auto;
+                margin-right: 10px;
+                .buy-button {
+                    padding: 8px 15px;
+                    width: auto;
+                }
+            }
+            .review-link {
+                padding: 8px 13px;
+            }
+        }
+    }
+    .book-page {
+        .book-content, img {
+            width: auto;
+            float: none;
+            margin: 0 auto 30px;
+        }
+    }
+}
+@media (max-width: 500px) {
+    .header {
+        padding: 40px 15px 20px;
+    }
+    .menu-bar {
+        text-align: center;
+        padding-bottom: 0;
+        .menu-toggle, .published-date {
+            float: none;
+            margin: 0 auto 15px;
+        }
+    }
+    .list .book-column {
+        .rank {
+            width: 10%;
+        }
+        img {
+            display: none;
+        }
+        .book-content {
+            width: 85%;
+        }
+    }
+    .book-row {
+        img {
+            display: none;
+        }
+        .book-content {
+            width: 85%;
+        }
+    }
+}
