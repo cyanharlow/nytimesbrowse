@@ -3,6 +3,7 @@
 var categoriesData;
 var overviewData;
 var categoryData;
+var bookData;
 
 var templateContent;
 
@@ -64,6 +65,19 @@ function getCategory(list) {
     request.send();
 };
 
+function getBook(isbn) {
+    var request = new XMLHttpRequest();
+    request.open('GET', 'https://www.googleapis.com/books/v1/volumes?q=isbn:' + isbn, true);
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            var data = JSON.parse(request.responseText)
+            bookData = data;
+            renderBookPage();
+        }
+    };
+    request.send();
+};
+
 function getWeeks(weeks) {
     if (weeks && weeks > 1) {
         return weeks + ' weeks on the list';
@@ -115,13 +129,14 @@ function parseHash() {
     totalImagesNeeded = 0;
 
     var hash = window.location.hash;
-    var activeCategory = false;
-    var categoryTitle;
+    var secondaryIdentifier;
     var identifier = hash.replace('#', '').split('_')[0];
-    if (identifier === 'category') {
-        activeCategory = true;
-        categoryTitle = hash.split('_')[1];
-        getCategory(categoryTitle);
+    if (identifier === 'book') {
+        secondaryIdentifier = hash.split('_')[1];
+        getBook(secondaryIdentifier)
+    } else if (identifier === 'category') {
+        secondaryIdentifier = hash.split('_')[1];
+        getCategory(secondaryIdentifier);
     } else {
         getOverview();
     }
@@ -172,38 +187,43 @@ function renderCategoryPage() {
         //     numImgsLoaded++;
         //     imageCounter.click();
         // };
-        //catBookImg.src = catBooks[c].book_image;
+        //catBookImg.src = cBook.book_image;
 
-
+        var cBook = catBooks[c];
         var arrowRank;
-        if (catBooks[c].rank_last_week === 0 || catBooks[c].rank_last_week === catBooks[c].rank) {
+        if (cBook.rank_last_week === 0 || cBook.rank_last_week === cBook.rank) {
             arrowRank = '';
-        } else if (catBooks[c].rank_last_week < catBooks[c].rank) {
+        } else if (cBook.rank_last_week < cBook.rank) {
             arrowRank = '&darr;';
         } else {
             arrowRank = '&uarr;';
         }
 
         // build display column
-        html += '<div class="book-row"><div class="page-width"><div class="rank"><span>' +
-        catBooks[c].rank +
+        html += '<div class="book-row"><div class="page-width"><a href="#book_' +
+        cBook.isbns[0].isbn10 +
+        '"><div class="rank"><span>' +
+        cBook.rank +
         '</span><span class="arrow-rank">' +
         arrowRank +
         '</span></div>' +
         '<img src="' +
-        // catBooks[c].book_image +
+        // cBook.book_image +
         '"><div class="book-content">' +
         '<p class="book-weeks">' +
-        getWeeks(catBooks[c].weeks_on_list) +
+        getWeeks(cBook.weeks_on_list) +
         '</p><h3 class="book-title">' +
-        catBooks[c].book_details[0].title +
+        cBook.book_details[0].title +
         '</h3><h3 class="author">' +
-        catBooks[c].book_details[0].author +
+        cBook.book_details[0].author +
         '</h3><p>' +
-        catBooks[c].book_details[0].description +
-        '</p>'+
-        // getBuyOptions(catBooks[c].buy_links) +
-        getReview(catBooks[c].reviews[0].book_review_link) +
+        cBook.book_details[0].description +
+        '</p></a>' +
+        '<a class="buy" href="' +
+        cBook.amazon_product_url +
+        '">Buy</a>' +
+        // getBuyOptions(cBook.buy_links) +
+        getReview(cBook.reviews[0].book_review_link) +
         '</div><div class="clear"></div></div></div>';
     }
     templateContent = html;
@@ -211,6 +231,53 @@ function renderCategoryPage() {
     totalImagesNeeded = 0;
     numImgsLoaded = 0;
     imageCounter.click();
+
+}
+
+function renderBookPage() {
+    // var bookCategoryId = hash.split('_')[1];
+    // var bookCategoryTitle;
+    // var bookCategoryHash;
+    // var bookRank = hash.split('_')[2];
+
+    // then find the singular book details
+    var singleBook = bookData.items[0];
+    var html = '';
+    // preload book image
+    totalImagesNeeded++;
+    var singleBookImg = new Image();
+    singleBookImg.onload = function() {
+        numImgsLoaded++;
+        imageCounter.click();
+    };
+    singleBookImg.src = singleBook.volumeInfo.imageLinks.thumbnail;
+
+    // build display column
+    html += '<div class="book-page"><div class="page-width">' +
+    '<div class="breadcrumb"><a href="#">All categories</a><span class="div">&gt;</span><a href="#category_' +
+    singleBook.volumeInfo.title +
+    '">' +
+    singleBook.volumeInfo.title +
+    '</a><span class="div">&gt;</span><span class="cap-title">' +
+    singleBook.volumeInfo.title.toLowerCase() +
+    '</span></div>' +
+    '<div class="book-content">' +
+    '<p class="book-weeks">' +
+    getWeeks(singleBook.weeks_on_list) +
+    '</p><h1 class="book-title">' +
+    singleBook.volumeInfo.title +
+    '</h1><h3 class="author">' +
+    singleBook.volumeInfo.authors[0] +
+    '</h3>' +
+    '<p>' +
+    singleBook.volumeInfo.description +
+    '</p>' +
+    //getBuyOptions(singleBook.buy_links) +
+    //getReview(singleBook.book_review_link) +
+    '</div><img src="' +
+    singleBook.volumeInfo.imageLinks.thumbnail +
+    '"><div class="clear"></div></div></div>';
+    templateContent = html;
 
 }
 
@@ -237,7 +304,9 @@ function renderMainPage() {
                 };
                 bookImg.src = books[b].book_image;
                 // build display column
-                html += '<div class="book-column"><div class="rank"><span>' +
+                html += '<div class="book-column"><a href="#book_' +
+                books[b].primary_isbn10 +
+                '"><div class="rank"><span>' +
                 books[b].rank +
                 '</span></div>' +
                 '<img src="' +
@@ -251,6 +320,7 @@ function renderMainPage() {
                 books[b].author +
                 '</h3><p>' +
                 books[b].description +
+                '</p></a>' +
                 getBuyOptions(books[b].buy_links) +
                 getReview(books[b].book_review_link) +
                 '</div><div class="clear"></div></div>';
