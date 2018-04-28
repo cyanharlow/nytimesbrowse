@@ -1,4 +1,4 @@
-// out: twentythree.css
+// out: nytimes.css
 .vendor(@property, @value) {
     @{property}: @value;
     -webkit-@{property}: @value;
@@ -22,6 +22,17 @@ a {
     text-decoration: none;
     &:hover {
         color: #555;
+    }
+
+    &.load-all {
+        display: block;
+        background-color: #41a2a4;
+        width: 200px;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+        color: white;
+        border-radius: 5px;
     }
 }
 p {
@@ -76,26 +87,41 @@ body {
     position: relative;
     min-height: 500px;
 }
-.loader {
+#load-container {
+    display: none;
+}
+#load-container.loading {
+    display: block;
     text-align: center;
     margin: auto;
-    position: absolute;
-    height: 100px;
-    width: 200px;
+    // position: absolute;
+    position: fixed;
+    background: rgba(255, 255, 255, 0.89);
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     font-family: @sans;
-    .loader-bar {
-        background-color: #bbbbbb;
-        margin-top: 20px;
-        #progress-bar {
-            background-color: #ffbf47;
-            height: 40px;
-            width: 10px;
+    .load-inner {
+        position: fixed;
+        margin: auto;
+        height: 100px;
+        width: 200px;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        .loader-bar {
+            background-color: #bbbbbb;
+            margin: 20px auto;
+            #progress-bar {
+                background-color: #ffbf47;
+                height: 40px;
+                width: 10px;
+            }
         }
     }
+
 }
 
 .header {
