@@ -73,7 +73,7 @@ function getCategory(list) {
 function getDetailedCategories() {
     var bookCalls = [];
     for (var c = 0; c < categoryData.results.length; c++) {
-        var isbn = categoryData.results[c].isbns[0] ? categoryData.results[c].isbns[0].isbn10 : categoryData.results[c].book_details[0].primary_isbn13;
+        var isbn = categoryData.results[c].book_details[0].primary_isbn13;
         bookCalls.push(getBook(isbn));
     }
 
@@ -117,7 +117,7 @@ function getReview(review) {
 }
 
 function getBuyOptions(buy) {
-    var buyHTML = '<div class="buy"><div><a class="buy-button">Buy</a><div class="buy-options"><div class="arrow"><div class="innerarrow"></div></div>';
+    var buyHTML = '<div class="buy"><div><a class="btn buy-button">Buy</a><div class="buy-options"><div class="arrow"><div class="innerarrow"></div></div>';
     for (var o = 0; o < buy.length; o++) {
         buyHTML += '<a href="' + buy[o].url + '" target="_blank">' + buy[o].name + '</a>';
     }
@@ -226,8 +226,8 @@ function renderCategoryPage() {
                 imageCounter.click();
             };
 
-            isbnNum = cBook.isbns[0] ? cBook.isbns[0].isbn10 : cBook.book_details[0].primary_isbn13
-            imgHref = 'href="#book_' + isbnNum + '"';
+            isbnNum = cBook.book_details[0].primary_isbn13;
+            imgHref = gBookData.volumeInfo.title ? 'href="#book_' + isbnNum + '"' : '';
             imgSrc = gBookData.volumeInfo.imageLinks.smallThumbnail;
             catBookImg.src = gBookData.volumeInfo.imageLinks.smallThumbnail;
         }
@@ -259,7 +259,7 @@ function renderCategoryPage() {
         '</h3><p>' +
         cBook.book_details[0].description +
         '</p></a>' +
-        '<a class="buy" href="' +
+        '<a class="buy btn" href="' +
         cBook.amazon_product_url +
         '">Buy</a>' +
         // getBuyOptions(cBook.buy_links) +
@@ -287,9 +287,7 @@ function renderBookPage() {
     singleBook.volumeInfo.title.toLowerCase() +
     '</span></div>' +
     '<div class="book-content">' +
-    '<p class="book-weeks">' +
-    getWeeks(singleBook.weeks_on_list) +
-    '</p><h1 class="book-title">' +
+    '<h1 class="book-title">' +
     singleBook.volumeInfo.title +
     '</h1><h3 class="author">' +
     singleBook.volumeInfo.authors[0] +
@@ -330,6 +328,9 @@ function renderMainPage() {
                 bookImg.src = books[b].book_image;
                 // build display column
                 html += '<div class="book-column">' +
+                '<a href="#book_' +
+                books[b].primary_isbn13 +
+                '">' +
                 '<div class="rank"><span>' +
                 books[b].rank +
                 '</span></div>' +
@@ -344,7 +345,7 @@ function renderMainPage() {
                 books[b].author +
                 '</h3><p>' +
                 books[b].description +
-                '</p>' +
+                '</p></a>' +
                 getBuyOptions(books[b].buy_links) +
                 getReview(books[b].book_review_link) +
                 '</div><div class="clear"></div></div>';

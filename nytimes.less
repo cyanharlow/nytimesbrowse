@@ -126,12 +126,12 @@ body {
 
 .header {
     text-align: center;
-    padding: 50px 15px 40px;
+    padding: 25px 0 15px;
     .nyt-logo {
-        width: 275px;
-        height: 60px;
+        width: 210px;
+        height: 40px;
         max-width: 100%;
-        margin: 0 auto 30px;
+        margin: 0 auto 15px;
     }
 }
 
@@ -194,6 +194,21 @@ h2 .small {
         background-color: @grey-med;
     }
 }
+
+.btn {
+    .vendor(border-radius, 8px);
+    background-color: @grey-med;
+    cursor: pointer;
+    font-family: @sans;
+    padding: 5px 10px;
+    border: 1px solid @white;
+    vertical-align: top;
+    display: inline-block;
+    &:hover {
+        color: @white;
+        background-color: #666;
+    }
+}
 .buy {
     position: relative;
     vertical-align: top;
@@ -202,18 +217,7 @@ h2 .small {
         position: relative;
     }
     a.buy-button {
-        .vendor(border-radius, 8px);
-        background-color: @grey-med;
-        cursor: pointer;
-        font-family: @sans;
-        padding: 5px 10px;
-        border: 1px solid @white;
         vertical-align: top;
-        display: inline-block;
-        &:hover {
-            color: @white;
-            background-color: #666;
-        }
     }
     .buy-options {
         display: none;
@@ -349,11 +353,12 @@ h2 .small {
 .book-page {
     img {
         float: right;
-        width: 35%;
+        width: 25%;
     }
     .book-content {
         float: left;
         width: 60%;
+        line-height: 1.5;
         .rank {
             padding: 10px 0;
             span {
