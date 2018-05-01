@@ -17,6 +17,13 @@ html, body {
     min-height: 100%;
     color: #333;
 }
+.clear {
+    &:after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+}
 a {
     color: #333;
     text-decoration: none;
@@ -82,6 +89,7 @@ body {
     margin: auto;
     padding: 0 5%;
     max-width: 90%;
+    position: relative;
 }
 .page-content {
     position: relative;
@@ -141,16 +149,41 @@ body {
     padding: 15px 0;
     border-top: 1px solid @grey-med;
     border-bottom: 2px solid;
-    .menu-toggle {
-        float: left;
+    .menu-toggle, .search-input {
         font-family: @sans;
         font-size: 15px;
         padding: 8px;
         max-width: 100%;
     }
+    .menu-toggle {
+        float: left;
+    }
+    .search-box {
+        position: absolute;
+        z-index: 888;
+        right: 5%;
+        top: 100%;
+        width: 300px;
+        max-height: 200px;
+        overflow-y: scroll;
+        a {
+            display: block;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            background-color: #ebebeb;
+            text-align: left;
+            & + a {
+                border-top: 0;
+            }
+            &:hover {
+                background-color: #eee;
+            }
+        }
+    }
     .published-date {
         float: right;
     }
+
 }
 .breadcrumb {
     padding: 0 0 15px;

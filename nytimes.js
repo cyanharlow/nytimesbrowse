@@ -26,6 +26,8 @@ imageCounter.addEventListener('click', function(e) {
     }
 }, false);
 
+
+
 function getCategories() {
     var request = new XMLHttpRequest();
     request.open('GET', 'https://api.nytimes.com/svc/books/v3/lists/names.json' + '?api-key=957474c975634cc7a01a8a3ada453a94', true);
@@ -84,9 +86,11 @@ function getDetailedCategories() {
     });
 }
 
-function getBook(bookIdentifier, isIdLookup) {
+function getBook(bookIdentifier, isGenericLookup, isId) {
     var url = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' + bookIdentifier + '&key=AIzaSyBAtwEZ2P-qF313gFfdKknKoh2UVKqAqkk';
-    if (isIdLookup) {
+    if (isGenericLookup) {
+        url = 'https://www.googleapis.com/books/v1/volumes/?q=' + bookIdentifier + '?key=AIzaSyBAtwEZ2P-qF313gFfdKknKoh2UVKqAqkk'
+    } else if (isId) {
         url = 'https://www.googleapis.com/books/v1/volumes/' + bookIdentifier + '?key=AIzaSyBAtwEZ2P-qF313gFfdKknKoh2UVKqAqkk'
     }
     return new Promise(function(resolve, reject) {
@@ -144,11 +148,6 @@ document.body.addEventListener("click", function(event) {
     }
 });
 
-function categoryChange() {
-    var caturl = document.getElementById('category-change').value;
-    window.location.hash = caturl;
-};
-
 function parseHash() {
     // first set the loader
     progressBar.setAttribute('style', 'width: 10%;');
@@ -162,7 +161,11 @@ function parseHash() {
     var identifier = hash.replace('#', '').split('_')[0];
     if (identifier === 'book') {
         secondaryIdentifier = hash.split('_')[1];
-        getBook(secondaryIdentifier).then(function(data) {
+        var isId = false;
+        if (hash.split('_')[2] && hash.split('_')[2] === 'id') {
+            isId = true;
+        }
+        getBook(secondaryIdentifier, false, isId).then(function(data) {
             bookData = data;
             renderBookPage();
         });
@@ -185,16 +188,62 @@ function renderStaticContent() {
     // var dayDate = Number(loadedData.results.published_date.substring(8,10));
     // var monthNum = Number(loadedData.results.published_date.substring(5,7)) - 1;
     // var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var headerHTML = '' + '<div class="menu-bar"><div class="page-width"><select class="menu-toggle" id="category-change" onchange="categoryChange()"><option selected disabled>See all categories</option>';
+    var headerHTML = document.createElement('div');
+    headerHTML.className = 'menu-bar clear';
+
+    var headerInner = document.createElement('div');
+    headerInner.className = 'page-width clear';
+    headerHTML.appendChild(headerInner);
+
+    var selectContainer = document.createElement('select');
+    selectContainer.className = 'menu-toggle';
+    selectContainer.id = 'category-change'
+    selectContainer.onchange = function(e) {
+        window.location.hash = e.target.value;
+    };
+    var firstOption = document.createElement('select');
+    firstOption.setAttribute('selected', true);
+    firstOption.setAttribute('disabled', true);
+    firstOption.innerHTML = 'See all categories'
+    selectContainer.appendChild(firstOption);
     for (var m = 0; m < menuChoices.length; m++) {
-        headerHTML += '<option value="#category_' + menuChoices[m].list_name_encoded + '">' + menuChoices[m].list_name + '</option>';
+        var nOption = document.createElement('option')
+        nOption.innerHTML = menuChoices[m].list_name;
+        nOption.value = "#category_" + menuChoices[m].list_name_encoded;
+        selectContainer.appendChild(nOption);
     }
-    headerHTML += '</select>';
+    headerInner.appendChild(selectContainer);
+
+    var searchContainer = document.createElement('div');
+    searchContainer.id = "search-container";
+    searchContainer.className = 'search-box';
+
+    var inputSearch = document.createElement('input');
+    inputSearch.type = 'text';
+    inputSearch.className = 'search-input';
+    inputSearch.setAttribute('placeholder', 'Search...');
+    inputSearch.onkeyup = function(e) {
+        searchContainer.innerHTML = '';
+        var searchVal = e.target.value.replace(/ /g, '+');
+        getBook(searchVal, true).then(function(data) {
+            if (data.items && data.items.length) {
+                for (var s = 0; s < data.items.length; s++) {
+                    searchContainer.innerHTML += '<a href="#book_' + data.items[s].id + '_id">' + data.items[s].volumeInfo.title + '</a>';
+                }
+            }
+
+        }, function(rejectedData) {
+            searchContainer.innerHTML = 'No results found.';
+        })
+    }
+    headerInner.appendChild(inputSearch);
+
+    headerInner.appendChild(searchContainer);
     // headerHTML += '<p class="published-date">' + months[monthNum] + ' ' + dayDate + ', ' + year + '</p>';
-    headerHTML += '<div class="clear"></div></div></div>';
+
 
     var footerHTML = '<div class="footer"><div class="page-width">' + categoriesData.copyright + '</div></div>';
-    document.getElementById('header').innerHTML = headerHTML;
+    document.getElementById('header').appendChild(headerHTML);
     document.getElementById('footer').innerHTML = footerHTML;
 };
 
@@ -260,8 +309,8 @@ function renderCategoryPage() {
 }
 
 function renderBookPage() {
-    if (bookData.totalItems) {
-        var singleBook = bookData.items[0].volumeInfo;
+    if (bookData.totalItems || bookData.volumeInfo) {
+        var singleBook = bookData.items ? bookData.items[0].volumeInfo : bookData.volumeInfo;
         var html = '';
         // preload book image
         totalImagesNeeded++;
@@ -300,7 +349,7 @@ function renderBookPage() {
         '</div><img src="' + singleBook.imageLinks.thumbnail + '"><div class="clear"></div></div></div>';
         templateContent = html;
     } else {
-        alert("We are having trouble accessing that book's information, please try again later")
+        alert("We are having trouble accessing the information for that title, please try again later")
         window.history.back();
     }
 
