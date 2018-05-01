@@ -319,7 +319,7 @@ function renderBookPage() {
             numImgsLoaded++;
             imageCounter.click();
         };
-        singleBookImg.src = singleBook.imageLinks.thumbnail;
+        singleBookImg.src = singleBook.imageLinks.large ? singleBook.imageLinks.large : singleBook.imageLinks.thumbnail;
 
         var bookAuthors = '';
         for (var au = 0; au < singleBook.authors.length; au++) {
